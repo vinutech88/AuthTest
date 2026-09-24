@@ -1,0 +1,87 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # -----------------------------------------------
+  # Backend Check: Python Dependencies
+  # -----------------------------------------------
+  backend-ci:
+    name: Backend CI (Python)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+  # -----------------------------------------------
+  # Frontend Check: React Dependencies & Build
+  # -----------------------------------------------
+  frontend-ci:
+    name: Frontend CI (React)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build React app
+        run: npm run build
+
+  # -----------------------------------------------
+  # CD: Deploy Staging (Only on push to 'develop')
+  # -----------------------------------------------
+  deploy-staging:
+    name: Deploy Staging Backend (Render)
+    needs: [backend-ci, frontend-ci]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Staging Deploy Hook
+        run: |
+          curl -X POST "${{ secrets.RENDER_STAGING_DEPLOY_HOOK_URL }}"
+
+  # -----------------------------------------------
+  # CD: Deploy Production (Only on push to 'main')
+  # -----------------------------------------------
+  deploy-production:
+    name: Deploy Production Backend (Render)
+    needs: [backend-ci, frontend-ci]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Production Deploy Hook
+        run: |
+          curl -X POST "${{ secrets.RENDER_PROD_DEPLOY_HOOK_URL || secrets.RENDER_DEPLOY_HOOK_URL }}"
