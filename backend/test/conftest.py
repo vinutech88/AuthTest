@@ -10,6 +10,8 @@ _SRC_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file_
 if _SRC_PATH not in sys.path:
     sys.path.insert(0, _SRC_PATH)
 
+os.environ.setdefault("AUTH_TOKEN_SECRET", "test-token-secret")
+
 import pytest
 from fastapi.testclient import TestClient
 

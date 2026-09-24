@@ -10,13 +10,24 @@ interface FieldErrors {
 }
 
 const REQUIRED_FIELD_MESSAGE = "This field is required.";
+const DEFAULT_REDIRECT_PATH = "/dashboard";
+
+function getSafeRedirectPath(pathname?: string): string {
+  if (pathname === DEFAULT_REDIRECT_PATH || pathname?.startsWith(`${DEFAULT_REDIRECT_PATH}/`)) {
+    return pathname;
+  }
+
+  return DEFAULT_REDIRECT_PATH;
+}
 
 export function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const redirectNotice = (location.state as { notice?: string } | null)?.notice;
-  const redirectTo = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ?? "/dashboard";
+  const redirectTo = getSafeRedirectPath(
+    (location.state as { from?: { pathname?: string } } | null)?.from?.pathname,
+  );
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -124,9 +135,9 @@ export function Login() {
           </button>
         </form>
 
-        <a className="login-forgot-password" href="/forgot-password">
+        <span className="login-forgot-password" aria-disabled="true">
           Forgot password?
-        </a>
+        </span>
 
         <p className="login-footer">
           Your credentials are protected with industry-standard encryption. This system complies with

@@ -14,9 +14,15 @@ import os
 import time
 from dataclasses import dataclass
 
-_TOKEN_SECRET = os.environ.get("AUTH_TOKEN_SECRET", "dev-only-insecure-secret-change-me")
 _TOKEN_TTL_SECONDS = 60 * 60  # 1 hour
 _PBKDF2_ITERATIONS = 200_000
+
+
+def _get_token_secret() -> str:
+    token_secret = os.environ.get("AUTH_TOKEN_SECRET")
+    if token_secret:
+        return token_secret
+    raise RuntimeError("AUTH_TOKEN_SECRET must be set before issuing or verifying authentication tokens.")
 
 
 def hash_password(password: str, salt: bytes | None = None) -> str:
@@ -29,9 +35,9 @@ def hash_password(password: str, salt: bytes | None = None) -> str:
 def verify_password(password: str, stored_hash: str) -> bool:
     try:
         salt_hex, _ = stored_hash.split("$", 1)
+        salt = bytes.fromhex(salt_hex)
     except ValueError:
         return False
-    salt = bytes.fromhex(salt_hex)
     candidate = hash_password(password, salt)
     return hmac.compare_digest(candidate, stored_hash)
 
@@ -46,7 +52,7 @@ def _b64url_decode(data: str) -> bytes:
 
 
 def _sign(payload_b64: str) -> str:
-    signature = hmac.new(_TOKEN_SECRET.encode("utf-8"), payload_b64.encode("ascii"), hashlib.sha256).digest()
+    signature = hmac.new(_get_token_secret().encode("utf-8"), payload_b64.encode("ascii"), hashlib.sha256).digest()
     return _b64url_encode(signature)
 
 

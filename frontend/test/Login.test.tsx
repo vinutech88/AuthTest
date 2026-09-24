@@ -190,4 +190,22 @@ describe("Login", () => {
 
     await waitFor(() => expect(screen.getByTestId("dashboard-custom-page")).toBeInTheDocument());
   });
+
+  it("falls back to /dashboard when the requested redirect path is not allowed", async () => {
+    vi.mocked(mockLoginRequest).mockResolvedValue({
+      token: "tok",
+      username: "admin",
+      fullName: "Alex Administrator",
+      role: "admin",
+      modules: [],
+      actions: [],
+    });
+    const user = userEvent.setup();
+    renderLogin([{ pathname: "/login", state: { from: { pathname: "https://example.com" } } }]);
+
+    await fillValidCredentials(user);
+    await user.click(screen.getByTestId("login-submit-button"));
+
+    await waitFor(() => expect(screen.getByTestId("dashboard-page")).toBeInTheDocument());
+  });
 });

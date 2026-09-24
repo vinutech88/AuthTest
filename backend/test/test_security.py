@@ -48,6 +48,11 @@ def test_verify_password_rejects_malformed_stored_hash():
     assert verify_password("anything", "not-a-valid-stored-hash") is False
 
 
+def test_verify_password_rejects_stored_hash_with_non_hex_salt():
+    """A stored hash with a non-hex salt must fail closed instead of raising."""
+    assert verify_password("anything", "not-hex$deadbeef") is False
+
+
 # ── issue_token / verify_token ──────────────────────────────────────────────
 
 
