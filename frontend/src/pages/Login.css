@@ -1,0 +1,158 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f6f9;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.login-card {
+  width: 800px;
+  min-height: 665px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+  padding: 56px 100px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-card__title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 8px;
+}
+
+.login-card__subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 32px;
+  text-align: center;
+}
+
+.login-form {
+  width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login-field label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.login-field input {
+  width: 600px;
+  height: 50px;
+  box-sizing: border-box;
+  padding: 0 16px;
+  font-size: 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.login-field input:focus {
+  border-color: #2563eb;
+}
+
+.login-field input[aria-invalid="true"] {
+  border-color: #dc2626;
+}
+
+.login-field__error {
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.login-auth-error-banner {
+  width: 600px;
+  box-sizing: border-box;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.login-redirect-notice {
+  width: 600px;
+  box-sizing: border-box;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.login-submit-button {
+  width: 600px;
+  height: 55px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.15s ease;
+}
+
+.login-submit-button:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.login-submit-button:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+}
+
+.login-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: login-spin 0.7s linear infinite;
+}
+
+@keyframes login-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.login-forgot-password {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #6b7280;
+  text-decoration: none;
+  cursor: default;
+}
+
+.login-footer {
+  margin-top: auto;
+  padding-top: 32px;
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: center;
+}
