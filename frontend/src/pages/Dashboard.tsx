@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { performRestrictedAction, AuthApiError } from "../api/authClient";
 import "./Dashboard.css";
@@ -41,9 +42,9 @@ export function Dashboard() {
 
       <nav className="dashboard-nav" data-testid="dashboard-module-nav">
         {user.modules.map((moduleName) => (
-          <a key={moduleName} href={`/modules/${moduleName}`}>
+          <Link key={moduleName} to={`/modules/${moduleName}`}>
             {moduleName}
-          </a>
+          </Link>
         ))}
       </nav>
 

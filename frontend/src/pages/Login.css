@@ -144,12 +144,9 @@
 .login-forgot-password {
   margin-top: 16px;
   font-size: 14px;
-  color: #2563eb;
+  color: #6b7280;
   text-decoration: none;
-}
-
-.login-forgot-password:hover {
-  text-decoration: underline;
+  cursor: default;
 }
 
 .login-footer {

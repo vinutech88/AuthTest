@@ -7,6 +7,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router-dom";
 import { Dashboard } from "../src/pages/Dashboard";
 
 vi.mock("../src/context/AuthContext", () => ({
@@ -63,10 +64,18 @@ describe("Dashboard", () => {
     vi.clearAllMocks();
   });
 
+  function renderDashboard() {
+    return render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>,
+    );
+  }
+
   it("renders nothing when there is no authenticated user", () => {
     mockAuth({ user: null });
 
-    const { container } = render(<Dashboard />);
+    const { container } = renderDashboard();
 
     expect(container).toBeEmptyDOMElement();
   });
@@ -74,7 +83,7 @@ describe("Dashboard", () => {
   it("renders only the modules permitted for the current user", () => {
     mockAuth({ modules: ["patients", "reports"] });
 
-    render(<Dashboard />);
+    renderDashboard();
 
     const nav = screen.getByTestId("dashboard-module-nav");
     const links = within(nav).getAllByRole("link").map((link) => link.textContent);
@@ -84,7 +93,7 @@ describe("Dashboard", () => {
   it("disables the restricted action button for a role without manage-users", () => {
     mockAuth({ actions: ["view"], canManageUsers: false });
 
-    render(<Dashboard />);
+    renderDashboard();
 
     expect(screen.getByTestId("action-restricted-button")).toBeDisabled();
   });
@@ -92,7 +101,7 @@ describe("Dashboard", () => {
   it("enables the restricted action button for a role with manage-users", () => {
     mockAuth({ actions: ["view", "edit", "delete", "manage-users"], canManageUsers: true });
 
-    render(<Dashboard />);
+    renderDashboard();
 
     expect(screen.getByTestId("action-restricted-button")).toBeEnabled();
   });
@@ -103,7 +112,7 @@ describe("Dashboard", () => {
       new AuthApiError(403, "You lack the manage-users permission."),
     );
     const user = userEvent.setup();
-    render(<Dashboard />);
+    renderDashboard();
 
     await user.click(screen.getByTestId("action-restricted-button"));
 
@@ -118,7 +127,7 @@ describe("Dashboard", () => {
     mockAuth({ actions: ["manage-users"], canManageUsers: true });
     vi.mocked(performRestrictedAction).mockRejectedValue(new Error("network down"));
     const user = userEvent.setup();
-    render(<Dashboard />);
+    renderDashboard();
 
     await user.click(screen.getByTestId("action-restricted-button"));
 
@@ -133,7 +142,7 @@ describe("Dashboard", () => {
     const logout = vi.fn();
     mockAuth({ logout });
     const user = userEvent.setup();
-    render(<Dashboard />);
+    renderDashboard();
 
     await user.click(screen.getByRole("button", { name: "Sign out" }));
 
